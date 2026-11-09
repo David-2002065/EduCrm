@@ -1,0 +1,121 @@
+@import "tailwindcss";
+
+/* Dizayn ranglari va o'lchamlari — hamma komponentlar shulardan foydalanadi */
+@theme {
+  --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-display: Urbanist, "Plus Jakarta Sans", system-ui, sans-serif;
+
+  --color-background: #f4f5f3;
+  --color-surface: #ececea;
+  --color-border: #e3e4e1;
+  --color-primary: #0b0c0b;
+  --color-on-primary: #ffffff;
+  --color-mint: #7cf29a;
+  --color-mint-soft: #dcfbe4;
+  --color-success: #16794a;
+  --color-warning: #b45309;
+  --color-warning-soft: #fbeedd;
+  --color-danger: #b42318;
+  --color-danger-soft: #ffe4e1;
+  --color-text-primary: #0b0c0b;
+  --color-text-secondary: #6b6f6b;
+
+  --color-card: #ffffff;           /* kartalar, inputlar, oynalar foni */
+  --color-on-mint: #0b0c0b;        /* mint fon ustidagi matn (har doim qora) */
+  --color-primary-accent: #7cf29a; /* primary fon ustidagi aksent matn */
+  --color-ink: #0b0c0b;            /* har doim qora: modal orqasi, tooltip, login paneli */
+
+  --radius-card: 24px;
+  --shadow-float: 0 8px 24px #0b0c0b14;
+}
+
+/*
+ * Dark mode: faqat tokenlar qiymati almashadi — komponentlar o'zgarmaydi.
+ * Chuqur qora-yashil fon, mint aksent; primary (tugmalar, faol menyu) — och rangga aylanadi.
+ */
+:root.dark {
+  color-scheme: dark;
+  --color-background: #0c0f0d;
+  --color-surface: #232925;
+  --color-border: #262c28;
+  --color-card: #141815;
+  --color-primary: #eef3ef;
+  --color-on-primary: #0b0c0b;
+  --color-primary-accent: #0e8a43;
+  --color-mint: #7cf29a;
+  --color-mint-soft: rgb(124 242 154 / 0.13);
+  --color-success: #7cf29a;
+  --color-warning: #f4b65e;
+  --color-warning-soft: rgb(244 182 94 / 0.14);
+  --color-danger: #ff7b6e;
+  --color-danger-soft: rgb(255 123 110 / 0.14);
+  --color-text-primary: #eef3ef;
+  --color-text-secondary: #929c95;
+  --shadow-float: 0 12px 32px rgb(0 0 0 / 0.5);
+}
+
+body {
+  @apply bg-background font-sans text-text-primary antialiased;
+  transition: background-color .25s ease, color .25s ease;
+}
+
+/* Dark mode zerikarli bo'lmasin: fonda yumshoq mint nur */
+:root.dark body {
+  background-image:
+    radial-gradient(900px 520px at -10% -10%, rgb(124 242 154 / 0.09), transparent 60%),
+    radial-gradient(700px 480px at 110% 110%, rgb(124 242 154 / 0.05), transparent 60%);
+  background-attachment: fixed;
+}
+/* Kartalar dark'da ingichka chegara bilan ajralib turadi */
+:root.dark .rounded-card.bg-card,
+:root.dark article.bg-card { box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.04); }
+
+/* Ingichka scrollbar */
+.scroll-thin { scrollbar-width: thin; scrollbar-color: var(--color-border) transparent; }
+
+@keyframes fade-in { from { opacity: 0 } to { opacity: 1 } }
+@keyframes pop-in { from { opacity: 0; transform: translateY(8px) scale(.98) } to { opacity: 1; transform: none } }
+.animate-fade-in { animation: fade-in .15s ease-out }
+.animate-pop-in { animation: pop-in .18s ease-out }
+
+/* Kalendar (react-day-picker) — loyiha ranglariga moslash */
+.edu-calendar {
+  --rdp-accent-color: var(--color-primary);
+  --rdp-accent-background-color: var(--color-mint-soft);
+  --rdp-day-height: 40px;
+  --rdp-day-width: 40px;
+  --rdp-day_button-height: 36px;
+  --rdp-day_button-width: 36px;
+  --rdp-day_button-border-radius: 9999px;
+  --rdp-selected-border: none;
+  --rdp-today-color: var(--color-success);
+  --rdp-nav-height: 2.5rem;
+  font-size: 14px;
+}
+.edu-calendar .rdp-month_caption { font-family: var(--font-display); font-size: 17px; font-weight: 500; padding-left: 6px; text-transform: capitalize; }
+.edu-calendar .rdp-weekday { font-size: 11px; font-weight: 600; color: var(--color-text-secondary); text-transform: uppercase; opacity: 1; }
+.edu-calendar .rdp-day_button { transition: background-color .15s; cursor: pointer; }
+.edu-calendar .rdp-day:not(.rdp-selected):not(.rdp-disabled) .rdp-day_button:hover { background: var(--color-background); }
+.edu-calendar .rdp-today:not(.rdp-selected) .rdp-day_button { background: var(--color-mint-soft); font-weight: 600; }
+.edu-calendar .rdp-selected { font-weight: 600; font-size: 14px; }
+.edu-calendar .rdp-selected .rdp-day_button { background: var(--color-primary); color: var(--color-primary-accent); }
+.edu-calendar .rdp-button_previous, .edu-calendar .rdp-button_next { border-radius: 9999px; cursor: pointer; }
+.edu-calendar .rdp-button_previous:hover, .edu-calendar .rdp-button_next:hover { background: var(--color-background); }
+.edu-calendar .rdp-chevron { fill: var(--color-primary); width: 16px; height: 16px; }
+.edu-calendar .rdp-dropdown_root { border-radius: 12px; padding: 2px 8px; background: var(--color-background); text-transform: capitalize; }
+
+/* Chop etish: sahifadagi hamma narsa yashiriladi, faqat chek (#print-area) chiqadi */
+#print-area { display: none; }
+@media print {
+  /* margin 0 — brauzer sahifa tepasiga sana/manzil yozmaydi */
+  @page { margin: 0; }
+  html, body { background: #fff !important; background-image: none !important; }
+  body > *:not(#print-area) { display: none !important; }
+  body > #print-area { display: block !important; }
+  #print-area .receipt { max-width: 72mm; padding: 3mm 0; margin: 0 auto; }
+  #print-area[data-width="58"] .receipt { max-width: 48mm; font-size: 10px; }
+}
+
+/* Brauzerning o'z "x" tugmasini yashiramiz — o'zimiznikini ishlatamiz */
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration { -webkit-appearance: none; appearance: none; }

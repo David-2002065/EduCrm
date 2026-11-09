@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<title>EduCRM reklama</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Manrope:wght@500;600;700&display=swap" rel="stylesheet">
+<!--
+  Bitta fayl — ikki format: 1080×1920 (istoriya) va 1080×1350 (post), o'lcham viewport'dan olinadi.
+  Vaqt jadvali (120 BPM, 1 takt = 2s) — music.py dagi qo'shiq bo'limlari bilan bir xil:
+    0–4s  intro      → 0-sahna: ilgak
+    4–12s kuplet     → 1: Bosh sahifa, 2: Davomat
+    12–20s naqarot   → 3: To'lovlar, 4: Telefonda
+    20–24s yakun     → 5: CTA
+-->
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #05070E; }
+  .frame {
+    position: relative; width: 100vw; height: 100vh; overflow: hidden;
+    background:
+      radial-gradient(circle at 85% 12%, rgba(42,63,158,.75), transparent 55%),
+      radial-gradient(circle at 5% 78%, rgba(75,42,158,.6), transparent 55%),
+      #05070E;
+    color: #fff; font-family: 'Manrope', sans-serif;
+    --top: 220px; --bottom: 260px; --side: 88px;
+  }
+  .frame::before {
+    content: ""; position: absolute; inset: 0; opacity: .04; pointer-events: none;
+    background-image: radial-gradient(#fff 2px, transparent 2px); background-size: 40px 40px;
+  }
+  .ring { position: absolute; border-radius: 50%; border: 1.5px solid rgba(143,176,255,.14); pointer-events: none; }
+  .ring.r1 { width: 1100px; height: 1100px; right: -620px; top: -380px; animation: spin 40s linear infinite; border-top-color: rgba(143,176,255,.4); }
+  .ring.r2 { width: 760px; height: 760px; left: -480px; bottom: 120px; animation: spin 30s linear infinite reverse; border-right-color: rgba(155,107,255,.4); }
+  .glow { position: absolute; width: 760px; height: 760px; right: -240px; top: 42%; border-radius: 50%;
+          background: radial-gradient(circle, rgba(79,139,255,.28), transparent 65%); animation: breathe 1s ease-in-out infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes breathe { 0%,100% { opacity: .55; transform: scale(1); } 50% { opacity: 1; transform: scale(1.06); } }
+
+  /* doimiy sarlavha qatori */
+  .brand { position: absolute; left: var(--side); right: var(--side); top: calc(var(--top) - 30px);
+           display: flex; align-items: center; gap: 18px; font-family: 'Sora'; font-size: 34px; font-weight: 700;
+           animation: up .7s cubic-bezier(.2,.8,.2,1) both; }
+  .brand .tag { margin-left: auto; display: flex; align-items: center; gap: 10px; padding: 10px 22px; border-radius: 999px;
+                border: 1px solid rgba(255,255,255,.18); background: rgba(255,255,255,.06); font-family: 'Manrope'; font-size: 24px; font-weight: 700; color: #C9D3F2; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; background: #6EE7B7; box-shadow: 0 0 14px #6EE7B7; flex: none; }
+  .steps { position: absolute; left: 50%; transform: translateX(-50%); bottom: calc(var(--bottom) - 150px); display: flex; gap: 12px; }
+  .steps i { width: 14px; height: 14px; border-radius: 999px; background: rgba(255,255,255,.18); display: block;
+             animation: stepOn .3s ease both; animation-delay: var(--s); }
+  @keyframes stepOn { to { width: 46px; background: linear-gradient(90deg, #4F8BFF, #9B6BFF); } }
+
+  /* sahnalar */
+  .scene { position: absolute; left: var(--side); right: var(--side); top: calc(var(--top) + 90px); bottom: var(--bottom);
+           display: flex; flex-direction: column;
+           animation: sIn .6s cubic-bezier(.2,.8,.2,1) both, sOut .45s ease-in forwards;
+           animation-delay: var(--s), calc(var(--e) - .45s); }
+  .scene.last { animation: sIn .6s cubic-bezier(.2,.8,.2,1) both; animation-delay: var(--s); }
+  @keyframes sIn { from { opacity: 0; transform: translateY(70px); } to { opacity: 1; transform: none; } }
+  @keyframes sOut { to { opacity: 0; transform: translateY(-50px) scale(.97); } }
+  .rv { animation: up .7s cubic-bezier(.2,.8,.2,1) both; animation-delay: calc(var(--s) + var(--o, 0s)); }
+  .pp { animation: pop .6s cubic-bezier(.3,1.5,.5,1) both; animation-delay: calc(var(--s) + var(--o, 0s)); }
+  @keyframes up { from { opacity: 0; transform: translateY(46px); } to { opacity: 1; transform: none; } }
+  @keyframes pop { from { opacity: 0; transform: scale(.7); } to { opacity: 1; transform: none; } }
+
+  .chip { align-self: flex-start; display: flex; align-items: center; gap: 12px; padding: 10px 22px; border-radius: 999px;
+          background: linear-gradient(90deg, rgba(79,139,255,.22), rgba(155,107,255,.22)); border: 1px solid rgba(143,176,255,.35);
+          font-family: 'Sora'; font-size: 24px; font-weight: 700; color: #DCE4FF; }
+  h1, h2 { margin: 0; font-family: 'Sora'; font-weight: 800; letter-spacing: -2.5px; line-height: 1.08; }
+  h1 { font-size: 88px; margin-top: 30px; }
+  h2 { font-size: 72px; margin-top: 26px; }
+  .acc { background: linear-gradient(90deg, #8FB0FF, #B48CFF); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .lead { margin: 22px 0 0; font-size: 33px; line-height: 1.4; color: #AEB8DA; font-weight: 500; }
+  .media { position: relative; flex: 1; margin-top: 50px; }
+
+  /* brauzer oynasi */
+  .browser { position: absolute; left: 0; right: 0; top: 40px; border-radius: 28px; overflow: hidden; background: #F4F5F3;
+             box-shadow: 0 40px 100px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.14); }
+  .browser .bar { height: 50px; display: flex; align-items: center; gap: 10px; padding: 0 22px; background: #E6E8EE; }
+  .browser .bar i { width: 13px; height: 13px; border-radius: 50%; display: block; }
+  .browser .bar .url { margin-left: 18px; flex: 1; height: 30px; border-radius: 10px; background: #fff; color: #5d6370;
+                       font-size: 17px; font-weight: 600; display: flex; align-items: center; padding: 0 14px; }
+  .browser .vp { overflow: hidden; aspect-ratio: 1.6; }
+  .browser .vp img { width: 100%; display: block; transform-origin: var(--fo, 50% 30%);
+                     animation: kb 4s linear both; animation-delay: var(--s); }
+  @keyframes kb { from { transform: scale(1); } to { transform: scale(1.1); } }
+
+  /* kattalashtirilgan bo'lak (haqiqiy skrinshotdan) */
+  .crop { position: absolute; left: -40px; right: -40px; top: var(--ct); border-radius: 26px; background-repeat: no-repeat;
+          box-shadow: 0 30px 80px rgba(0,0,0,.65), 0 0 0 3px rgba(143,176,255,.55), 0 0 60px rgba(79,139,255,.45);
+          animation: zoomIn .7s cubic-bezier(.3,1.4,.5,1) both; animation-delay: calc(var(--s) + var(--o, 1.2s)); }
+  @keyframes zoomIn { from { opacity: 0; transform: scale(.6) translateY(-60px); } to { opacity: 1; transform: none; } }
+  .tap { position: absolute; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%;
+         border: 4px solid #4F8BFF; background: rgba(79,139,255,.25); opacity: 0;
+         animation: tap .55s ease-out both; animation-delay: var(--t); }
+  @keyframes tap { 0% { opacity: 0; transform: scale(.4); } 30% { opacity: 1; } 100% { opacity: 0; transform: scale(1.5); } }
+
+  /* telefon */
+  .phone { position: absolute; width: 430px; height: 860px; border-radius: 64px; padding: 14px; background: #0D0F14;
+           box-shadow: 0 40px 100px rgba(0,0,0,.65), 0 0 0 2px rgba(255,255,255,.16) inset, 0 0 0 1px rgba(143,176,255,.25); }
+  .phone .scr { width: 100%; height: 100%; border-radius: 50px; overflow: hidden; background: #F4F5F3; position: relative; }
+  .phone .scr img { width: 100%; display: block; animation: scroll 2.6s cubic-bezier(.6,0,.3,1) both; animation-delay: calc(var(--s) + var(--so, 1s)); }
+  .phone .scr::before { content: ""; position: absolute; z-index: 2; top: 14px; left: 50%; width: 120px; height: 34px; margin-left: -60px; border-radius: 20px; background: #0D0F14; }
+  @keyframes scroll { to { transform: translateY(var(--scroll, 0px)); } }
+
+  .float { animation: float 4s ease-in-out infinite; }
+  @keyframes float { 0%,100% { translate: 0 0; } 50% { translate: 0 -14px; } }
+
+  .pills { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 44px; }
+  .pills span { padding: 14px 26px; border-radius: 999px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14);
+                font-family: 'Sora'; font-size: 27px; font-weight: 700; display: flex; align-items: center; gap: 12px; }
+  .pills span::before { content: ""; width: 10px; height: 10px; border-radius: 50%; background: #6EE7B7; }
+  .cta { align-self: center; display: flex; align-items: center; gap: 16px; padding: 32px 62px; border-radius: 999px; background: #3563E9;
+         font-family: 'Sora'; font-size: 38px; font-weight: 700; box-shadow: 0 18px 60px rgba(53,99,233,.6);
+         animation: pop .6s cubic-bezier(.3,1.5,.5,1) both, beat .5s ease-out infinite; animation-delay: calc(var(--s) + 1s), calc(var(--s) + 1.5s); }
+  @keyframes beat { 0% { transform: scale(1.05); box-shadow: 0 18px 80px rgba(53,99,233,.9); } 100% { transform: scale(1); } }
+  .contact { margin-top: 26px; text-align: center; font-size: 32px; font-weight: 700; color: #C9D3F2; }
+  .big-logo { align-self: center; display: flex; align-items: center; gap: 22px; padding: 22px 34px; border-radius: 34px;
+              background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14); font-family: 'Sora'; font-size: 54px; font-weight: 800; }
+  .big-logo .mark { width: 84px; height: 84px; border-radius: 26px; background: #7CF29A; display: grid; place-items: center; }
+
+  /* ---------- post formati (1080×1350) ---------- */
+  @media (max-height: 1400px) {
+    .frame { --top: 120px; --bottom: 70px; }
+    .brand { font-size: 30px; }
+    .brand svg { width: 64px; height: 64px; }
+    .brand .tag { font-size: 21px; }
+    .scene { top: calc(var(--top) + 70px); }
+    h1 { font-size: 70px; margin-top: 22px; }
+    h2 { font-size: 58px; margin-top: 18px; }
+    .lead { font-size: 28px; margin-top: 14px; }
+    .media { margin-top: 34px; }
+    .steps { display: none; }
+    .browser { left: 70px; right: 70px; top: 0; }
+    .crop { left: -30px; right: -30px; top: var(--ctp); }
+    .phone { width: 340px; height: 680px; border-radius: 52px; }
+    .phone .scr { border-radius: 40px; }
+    .hide-post { display: none !important; }
+    .pills { margin-top: 30px; }
+    .pills span { font-size: 23px; padding: 12px 22px; }
+    .cta { font-size: 32px; padding: 26px 52px; }
+    .contact { font-size: 28px; margin-top: 18px; }
+    .big-logo { font-size: 44px; }
+  }
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="ring r1"></div>
+  <div class="ring r2"></div>
+  <div class="glow" style="animation-delay:4s"></div>
+
+  <div class="brand">
+    <svg width="72" height="72" viewBox="220 220 640 640" role="img" aria-label="Craftica AI">
+      <defs>
+        <linearGradient id="logo-arc" x1="0.1" y1="0" x2="0.9" y2="1">
+          <stop offset="0" stop-color="#4F8BFF"/>
+          <stop offset="1" stop-color="#9B6BFF"/>
+        </linearGradient>
+      </defs>
+      <path d="M723.8 356.2 A260 260 0 1 0 723.8 723.8" fill="none" stroke="url(#logo-arc)" stroke-width="88" stroke-linecap="round"/>
+      <path d="M540 432 C553 515 565 527 648 540 C565 553 553 565 540 648 C527 565 515 553 432 540 C515 527 527 515 540 432 Z" fill="#FFFFFF"/>
+    </svg>
+    Craftica AI
+    <span class="tag"><span class="dot"></span>EduCRM</span>
+  </div>
+
+  <!-- 0: ilgak -->
+  <section class="scene" style="--s:0s; --e:4s">
+    <div class="chip rv" style="--o:.3s">O'quv markazlar uchun CRM tizim</div>
+    <h1><span class="rv" style="--o:.6s; display:block">O'quv markazingizni</span>
+        <span class="rv" style="--o:1s; display:block">boshqarish endi <span class="acc">oson</span></span></h1>
+    <p class="lead rv hide-post" style="--o:1.4s">O'quvchilar, davomat, to'lovlar va cheklar — hammasi EduCRM'da.</p>
+    <div class="media">
+      <div class="phone rv float" style="--o:1.6s; left:0; right:0; margin:0 auto; top:20px; --scroll:-30%; --so:2.2s">
+        <div class="scr"><img src="shots/mob-dashboard.png" alt=""></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 1: bosh sahifa -->
+  <section class="scene" style="--s:4s; --e:8s">
+    <div class="chip rv" style="--o:.2s">01 · Bosh sahifa</div>
+    <h2 class="rv" style="--o:.35s">Hammasi <span class="acc">bir qarashda</span></h2>
+    <p class="lead rv" style="--o:.5s">Tushum, bugungi davomat va qarzdorlar — kirishingiz bilan ko'rinadi.</p>
+    <div class="media">
+      <div class="browser rv" style="--o:.5s; --fo:60% 20%">
+        <div class="bar"><i style="background:#FF6159"></i><i style="background:#FFBD2E"></i><i style="background:#28C941"></i><span class="url">educrm · Bosh sahifa</span></div>
+        <div class="vp"><img src="shots/desk-dashboard.png" alt=""></div>
+      </div>
+      <div class="crop" data-src="shots/desk-dashboard.png" data-x="576" data-y="312" data-w="2255" data-h="311" style="--ct:600px; --ctp:470px; --o:1.3s"></div>
+    </div>
+  </section>
+
+  <!-- 2: davomat -->
+  <section class="scene" style="--s:8s; --e:12s">
+    <div class="chip rv" style="--o:.2s">02 · Davomat</div>
+    <h2 class="rv" style="--o:.35s">Davomat — <span class="acc">bir bosishda</span></h2>
+    <p class="lead rv" style="--o:.5s">Ustoz kim kelganini belgilaydi, ota-onaning raqami ham shu yerda.</p>
+    <div class="media">
+      <div class="browser rv" style="--o:.5s; --fo:70% 60%">
+        <div class="bar"><i style="background:#FF6159"></i><i style="background:#FFBD2E"></i><i style="background:#28C941"></i><span class="url">educrm · Davomat</span></div>
+        <div class="vp"><img src="shots/desk-attendance.png" alt=""></div>
+      </div>
+      <div class="crop" data-src="shots/desk-attendance.png" data-x="608" data-y="742" data-w="2192" data-h="480" style="--ct:560px; --ctp:400px; --o:1.2s">
+        <span class="tap" style="left:81.8%; top:12%; --t:9.5s"></span>
+        <span class="tap" style="left:81.8%; top:37%; --t:10s"></span>
+        <span class="tap" style="left:81.8%; top:62%; --t:10.5s"></span>
+        <span class="tap" style="left:81.8%; top:87%; --t:11s"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3: to'lovlar (naqarot) -->
+  <section class="scene" style="--s:12s; --e:16s">
+    <div class="chip rv" style="--o:.2s">03 · To'lovlar</div>
+    <h2 class="rv" style="--o:.35s">To'lovlar <span class="acc">nazoratda</span></h2>
+    <p class="lead rv" style="--o:.5s">Kim to'ladi, kim qarzdor — darhol ko'rinadi. To'lovdan keyin chek o'zi chiqadi.</p>
+    <div class="media">
+      <div class="browser rv" style="--o:.5s; --fo:50% 70%">
+        <div class="bar"><i style="background:#FF6159"></i><i style="background:#FFBD2E"></i><i style="background:#28C941"></i><span class="url">educrm · To'lovlar</span></div>
+        <div class="vp"><img src="shots/desk-payments.png" alt=""></div>
+      </div>
+      <div class="crop" data-src="shots/desk-payments.png" data-x="576" data-y="312" data-w="2255" data-h="311" style="--ct:600px; --ctp:470px; --o:1.2s"></div>
+    </div>
+  </section>
+
+  <!-- 4: telefonda -->
+  <section class="scene" style="--s:16s; --e:20s">
+    <div class="chip rv" style="--o:.2s">04 · Istalgan joydan</div>
+    <h2 class="rv" style="--o:.35s">Telefonda ham <span class="acc">qulay</span></h2>
+    <p class="lead rv" style="--o:.5s">Guruhlar, o'quvchilar, ustozlar va filiallar — doim cho'ntagingizda.</p>
+    <div class="media">
+      <div class="phone rv" style="--o:.6s; left:0; top:30px; rotate:-5deg; --scroll:-40%; --so:1.2s">
+        <div class="scr"><img src="shots/mob-groups.png" alt=""></div>
+      </div>
+      <div class="phone rv" style="--o:.9s; right:0; top:70px; rotate:5deg; --scroll:-18%; --so:1.5s">
+        <div class="scr"><img src="shots/mob-students.png" alt=""></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5: CTA -->
+  <section class="scene last" style="--s:20s">
+    <div class="spacer" style="flex:.6"></div>
+    <div class="big-logo pp" style="--o:.1s">
+      <span class="mark"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#0b0c0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c0 1.5 3 3 6 3s6-1.5 6-3v-5"/></svg></span>
+      EduCRM
+    </div>
+    <h2 class="rv" style="--o:.3s; text-align:center; margin-top:40px">Markazingizni <span class="acc">tartibga</span> keltiring</h2>
+    <div class="pills rv" style="--o:.6s; justify-content:center">
+      <span>Davomat</span><span>To'lovlar</span><span>Chek printeri</span><span>Filiallar</span><span>Rollar</span>
+    </div>
+    <div class="spacer" style="flex:1"></div>
+    <div class="cta">Bepul konsultatsiya
+      <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </div>
+    <div class="contact rv" style="--o:1.3s">Telegram: @Bunyodovf</div>
+  </section>
+
+  <div class="steps">
+    <i style="--s:0s"></i><i style="--s:4s"></i><i style="--s:8s"></i><i style="--s:12s"></i><i style="--s:16s"></i><i style="--s:20s"></i>
+  </div>
+</div>
+<script>
+  // .crop — skrinshotning kerakli bo'lagini kattalashtirib ko'rsatadi (data-x/y/w/h — asl piksellarda)
+  const IMG_W = 2880;
+  document.querySelectorAll('.crop').forEach(el => {
+    const k = el.offsetWidth / +el.dataset.w;
+    el.style.backgroundImage = `url(${el.dataset.src})`;
+    el.style.backgroundSize = `${IMG_W * k}px auto`;
+    el.style.backgroundPosition = `${-el.dataset.x * k}px ${-el.dataset.y * k}px`;
+    el.style.height = `${el.dataset.h * k}px`;
+  });
+</script>
+</body>
+</html>

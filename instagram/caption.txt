@@ -1,0 +1,18 @@
+O'quv markazingizda davomat daftarda, to'lovlar esa Excelda yuritilyaptimi? 📚
+
+EduCRM — o'quv markazlar uchun yaratilgan boshqaruv tizimi. O'quvchilar, ota-onalar, ustozlar, guruhlar va filiallar — hammasi bitta tizimda. Qog'ozbozlik kamayadi, nazorat esa doim qo'lingizda bo'ladi.
+
+Nimalar qila oladi 👇
+✔️ Kunlik davomat — bir bosishda
+✔️ Oylik to'lovlar nazorati: kim to'lagan, kim to'lamagan — darhol ko'rinadi
+✔️ To'lovdan keyin chek printerdan o'zi chiqadi
+✔️ Bir nechta filial, rollar va ruxsatlar (admin, kassir, ustoz)
+✔️ Bitta ustoz bir vaqtda ikki guruhga qo'yilmaydi — tizim o'zi tekshiradi
+
+🛠 Texnologiyalar: React, Python (FastAPI), SQLite
+
+Sizga ham shunday CRM kerakmi?
+📩 Bepul konsultatsiya: Telegram @Bunyodovf
+
+#craftica_ai #aiuz #sunniyintellekt #biznesavtomatlashtirish #tadbirkorlik #biznesuz #toshkent #uzbekistan #crm #crmtizim #mijozlar #savdo #oquvmarkaz #educrm #talim
+
