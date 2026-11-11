@@ -1,10 +1,12 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { qs } from '../api'
+import AttendanceTodayModal from '../components/dashboard/AttendanceTodayModal'
 import PersonCell from '../components/common/PersonCell'
 import PhoneLink from '../components/common/PhoneLink'
 import { Badge, BarChart, Card, EmptyState, ErrorBox, Loader, PageHeader, ProgressBar, StatCard, SummaryRow } from '../components/ui'
 import { useAuth } from '../context/AuthContext'
 import { useBranch } from '../context/BranchContext'
+import { useDisclosure } from '../hooks/useDisclosure'
 import { useQuery } from '../hooks/useQuery'
 import { formatDate, money, monthLabel, monthShort, shortMoney } from '../utils/format'
 
@@ -12,6 +14,7 @@ export default function Dashboard() {
   const { user } = useAuth()
   const { branchId } = useBranch()
   const navigate = useNavigate()
+  const attendance = useDisclosure()
   const { data, loading, error, reload } = useQuery(`/dashboard${qs({ branch_id: branchId })}`)
 
   if (loading && !data) return <Loader />
@@ -34,6 +37,7 @@ export default function Dashboard() {
           icon="attendance"
           hint={marked ? `${stats.absent_today} kishi kelmadi` : 'Davomat hali olinmagan'}
           tone={stats.absent_today ? 'danger' : undefined}
+          onClick={marked ? () => attendance.open() : undefined}
         />
         <StatCard label="Qarzdorlar" value={stats.debtors} icon="alert" hint={money(stats.expected_month - stats.income_month)} tone="danger" />
       </div>
@@ -85,6 +89,8 @@ export default function Dashboard() {
           )}
         </Card>
       </div>
+
+      <AttendanceTodayModal open={attendance.isOpen} onClose={attendance.close} branchId={branchId} />
     </>
   )
 }

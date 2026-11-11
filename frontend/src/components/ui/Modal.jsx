@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import IconButton from './IconButton'
 
-const WIDTHS = { sm: 'max-w-md', md: 'max-w-xl', lg: 'max-w-3xl' }
+const WIDTHS = { sm: 'max-w-md', md: 'max-w-xl', lg: 'max-w-3xl', xl: 'max-w-6xl' }
 
 // Oyna. Esc yoki fonni bosish bilan yopiladi.
 export default function Modal({ open, onClose, title, subtitle, children, footer, size = 'md' }) {

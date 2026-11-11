@@ -1,5 +1,7 @@
 """Login, parol va token bilan ishlash."""
+import base64
 import hashlib
+import hmac
 import os
 from datetime import datetime, timedelta
 
@@ -27,6 +29,34 @@ def verify_password(password: str, stored: str) -> bool:
     salt_hex, digest_hex = stored.split("$")
     digest = hashlib.pbkdf2_hmac("sha256", password.encode(), bytes.fromhex(salt_hex), 100_000)
     return digest.hex() == digest_hex
+
+
+def _keystream(nonce: bytes, length: int) -> bytes:
+    out, counter = b"", 0
+    while len(out) < length:
+        out += hmac.new(SECRET_KEY.encode(), nonce + counter.to_bytes(4, "big"), hashlib.sha256).digest()
+        counter += 1
+    return out[:length]
+
+
+def encrypt_secret(text: str) -> str:
+    """Parolni bosh admin ko'rishi uchun qaytariladigan shifrda saqlash (kalit — SECRET_KEY)."""
+    nonce, data = os.urandom(12), text.encode()
+    cipher = bytes(a ^ b for a, b in zip(data, _keystream(nonce, len(data))))
+    tag = hmac.new(SECRET_KEY.encode(), nonce + cipher, hashlib.sha256).digest()[:8]
+    return base64.urlsafe_b64encode(nonce + tag + cipher).decode()
+
+
+def decrypt_secret(token: str):
+    """Shifrni ochadi. Kalit o'zgargan yoki ma'lumot buzilgan bo'lsa — None."""
+    try:
+        raw = base64.urlsafe_b64decode(token.encode())
+        nonce, tag, cipher = raw[:12], raw[12:20], raw[20:]
+        if not hmac.compare_digest(tag, hmac.new(SECRET_KEY.encode(), nonce + cipher, hashlib.sha256).digest()[:8]):
+            return None
+        return bytes(a ^ b for a, b in zip(cipher, _keystream(nonce, len(cipher)))).decode()
+    except (ValueError, UnicodeDecodeError):
+        return None
 
 
 def create_token(user_id: int) -> str:

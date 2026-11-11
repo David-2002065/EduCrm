@@ -1,4 +1,5 @@
 import { Route, Routes } from 'react-router-dom'
+import AiTutor from './pages/AiTutor'
 import AppLayout from './components/layout/AppLayout'
 import ProtectedRoute, { HomeRedirect } from './components/layout/ProtectedRoute'
 import { EmptyState } from './components/ui'
@@ -7,6 +8,7 @@ import Attendance from './pages/Attendance'
 import Branches from './pages/Branches'
 import Dashboard from './pages/Dashboard'
 import Groups from './pages/Groups'
+import GroupTests from './pages/GroupTests'
 import Login from './pages/Login'
 import NotFound from './pages/NotFound'
 import Payments from './pages/Payments'
@@ -22,12 +24,14 @@ const ROUTES = [
   ['/students', 'students.view', Students],
   ['/students/:id', 'students.view', StudentDetail],
   ['/groups', 'groups.view', Groups],
+  ['/groups/:id/tests', 'tests.manage', GroupTests],
   ['/teachers', 'teachers.view', Teachers],
   ['/attendance', 'attendance.mark', Attendance],
   ['/payments', 'payments.view', Payments],
   ['/branches', 'branches.manage', Branches],
   ['/users', 'users.manage', Users],
   ['/printer', 'payments.create', Printer],
+  ['/ai-tutor', null, AiTutor], // hozircha hammaga ochiq
 ]
 
 export default function App() {

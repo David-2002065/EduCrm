@@ -1,14 +1,16 @@
-import Field, { controlClass } from './Field'
+import Field, { controlClass, isEmpty, useFieldError } from './Field'
 import Icon from './Icon'
 
 /**
  * onChange qiymatning o'zini qaytaradi (event emas): onChange={(v) => ...}
  * clearable — qiymat bo'lsa o'ng tomonda ✕ chiqadi (type="search" bo'lsa avtomatik)
  */
-export default function Input({ label, error, hint, icon, onChange, clearable, className = '', ...props }) {
+export default function Input({ label, error, hint, icon, onChange, clearable, required, missing, className = '', ...props }) {
+  missing = missing ?? isEmpty(props.value)
+  error = useFieldError({ error, required, missing })
   const showClear = (clearable ?? props.type === 'search') && props.value !== '' && props.value != null && !props.disabled
   return (
-    <Field label={label} error={error} hint={hint} className={className}>
+    <Field label={label} error={error} hint={hint} required={required} missing={missing} className={className}>
       <span className="relative block">
         {icon && (
           <Icon name={icon} size={17} className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-text-secondary" />
@@ -16,6 +18,8 @@ export default function Input({ label, error, hint, icon, onChange, clearable, c
         <input
           className={`${controlClass(error)} ${icon ? 'pl-11' : ''} ${showClear ? 'pr-10' : ''}`}
           onChange={(e) => onChange?.(e.target.value)}
+          required={required}
+          aria-invalid={error ? true : undefined}
           {...props}
         />
         {showClear && (

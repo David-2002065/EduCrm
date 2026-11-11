@@ -30,7 +30,7 @@ export default function TeacherFormModal({ open, onClose, teacher, onSaved }) {
   return (
     <FormModal open={open} onClose={onClose} title={teacher ? 'Ustozni tahrirlash' : 'Yangi ustoz'} onSubmit={submit}>
       <Input label="Ism familiya" required placeholder="Malika Saidova" className="sm:col-span-2" {...form.field('full_name')} />
-      <PhoneInput label="Telefon" {...form.field('phone')} />
+      <PhoneInput label="Telefon" required {...form.field('phone')} />
       <Input label="Fani" placeholder="Ingliz tili" icon="book" {...form.field('subject')} />
       <Select
         label="Filial"

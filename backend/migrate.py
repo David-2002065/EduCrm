@@ -13,7 +13,10 @@ def migrate(engine):
     add_column(engine, "users", "role_id", "INTEGER REFERENCES roles(id)")
     add_column(engine, "users", "extra_permissions", "TEXT DEFAULT ''")
     add_column(engine, "users", "teacher_id", "INTEGER REFERENCES teachers(id)")
+    add_column(engine, "students", "telegram_chat_id", "VARCHAR(30)")
+    add_column(engine, "users", "password_enc", "TEXT")
     ensure_roles(engine)
+    add_permissions(engine)
 
 
 def ensure_roles(engine):
@@ -32,6 +35,24 @@ def ensure_roles(engine):
         for user_id, legacy in conn.execute(text("SELECT id, role FROM users WHERE role_id IS NULL")).fetchall():
             role_id = ids.get(LEGACY_ROLE_NAMES.get(legacy or "", "Admin"))
             conn.execute(text("UPDATE users SET role_id = :r WHERE id = :u"), {"r": role_id, "u": user_id})
+
+
+def add_permissions(engine):
+    """Yangi ruxsatlarni eski rollarga BIR MARTA qo'shadi (keyin admin olib tashlasa — qaytib qo'shilmaydi)."""
+    from permissions import ADDED_PERMISSIONS
+
+    with engine.begin() as conn:
+        conn.execute(text("CREATE TABLE IF NOT EXISTS applied_permissions (name VARCHAR(50) PRIMARY KEY)"))
+        done = {name for (name,) in conn.execute(text("SELECT name FROM applied_permissions"))}
+        for perm, role_names in ADDED_PERMISSIONS.items():
+            if perm in done:
+                continue
+            for role_id, name, perms in conn.execute(text("SELECT id, name, permissions FROM roles")).fetchall():
+                current = [p for p in (perms or "").split(",") if p]
+                if name in role_names and perm not in current:
+                    conn.execute(text("UPDATE roles SET permissions = :p WHERE id = :id"),
+                                 {"p": ",".join(current + [perm]), "id": role_id})
+            conn.execute(text("INSERT INTO applied_permissions (name) VALUES (:n)"), {"n": perm})
 
 
 def add_column(engine, table, column, ddl):

@@ -19,6 +19,12 @@ python3 -m venv venv
 API: http://localhost:8000 · Hujjatlar: http://localhost:8000/docs
 Birinchi ishga tushganda namunaviy ma'lumot qo'shiladi. Login: **admin / admin123**
 
+AI ustoz sozlamalari `backend/.env` faylida (namuna: `backend/.env.example`, nusxa: `cp .env.example .env`). `.env` GitHub'ga yuklanmaydi; o'zgartirgandan keyin backend'ni qayta ishga tushiring.
+- `ANTHROPIC_API_KEY` — markazning o'z Claude API kaliti (console.anthropic.com → API Keys). Balans tugasa AI ustoz to'xtaydi, CRM'ning qolgani ishlayveradi.
+- `AI_TUTOR_MODEL` — `claude-opus-5-5` (standart), `claude-sonnet-5-5` (~2x arzon), `claude-haiku-4-5` (~4x arzon).
+- `AZURE_SPEECH_KEY` / `AZURE_SPEECH_REGION` — rasmiy Azure ovozi. Bo'sh qolsa bepul `edge-tts` ishlatiladi (norasmiy, sinov uchun).
+- Joriy sozlamani tekshirish: `GET /api/ai-tutor/status`.
+
 Chekdagi markaz nomini o'zgartirish:
 ```bash
 CENTER_NAME="Bilim o'quv markazi" ./venv/bin/uvicorn main:app --reload

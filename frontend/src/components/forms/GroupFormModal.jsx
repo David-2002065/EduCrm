@@ -44,7 +44,7 @@ export default function GroupFormModal({ open, onClose, group, onSaved }) {
     <FormModal open={open} onClose={onClose} title={group ? 'Guruhni tahrirlash' : 'Yangi guruh'} onSubmit={submit}>
       <Input label="Guruh nomi" required placeholder="English Beginner A" {...form.field('name')} />
       <Input label="Kurs / fan" placeholder="Ingliz tili" icon="book" {...form.field('course')} />
-      <Select label="Filial" options={branchOptions} {...form.field('branch_id')} />
+      <Select label="Filial" required options={branchOptions} {...form.field('branch_id')} />
       <Select label="Ustoz" options={teacherOptions} placeholder="Ustozni tanlang" clearable {...form.field('teacher_id')} />
       <Select label="Dars kunlari" options={GROUP_DAYS} {...form.field('days')} />
       <TimePicker label="Vaqti" {...form.field('time')} />

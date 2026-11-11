@@ -6,6 +6,8 @@ import Input from './Input'
  * onChange esa bazaga yoziladigan probelsiz qiymatni beradi: "+998990893954".
  */
 export default function PhoneInput({ value, onChange, placeholder = '+998 90 123 45 67', ...props }) {
+  // To'liq raqam: +998 va 9 ta raqam
+  const missing = !value ? true : value.replace(/\D/g, '').length !== 12 ? "Raqamni to'liq kiriting" : false
   const handle = (text) => {
     let digits = text.replace(/\D/g, '').slice(0, 12)
     // Foydalanuvchi "90..." deb boshlasa, 998 ni o'zimiz qo'shamiz
@@ -19,6 +21,7 @@ export default function PhoneInput({ value, onChange, placeholder = '+998 90 123
       icon="phone"
       placeholder={placeholder}
       value={formatPhone(value)}
+      missing={missing}
       onChange={handle}
       {...props}
     />

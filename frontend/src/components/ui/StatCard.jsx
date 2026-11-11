@@ -1,10 +1,16 @@
 import Icon from './Icon'
 
-// Raqamli ko'rsatkich kartasi. dark=true — qora fon (asosiy ko'rsatkich uchun)
-export default function StatCard({ label, value, icon, hint, dark = false, tone }) {
+// Raqamli ko'rsatkich kartasi. dark=true — qora fon (asosiy ko'rsatkich uchun). onClick — bosiladigan karta
+export default function StatCard({ label, value, icon, hint, dark = false, tone, onClick }) {
   const hintColor = { danger: 'text-danger', success: 'text-success' }[tone] || (dark ? 'text-on-primary/60' : 'text-text-secondary')
   return (
-    <div className={`flex min-w-0 flex-col gap-4 rounded-card p-5 ${dark ? 'bg-primary text-on-primary' : 'bg-card'}`}>
+    <div
+      onClick={onClick}
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      onKeyDown={onClick ? (e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), onClick()) : undefined}
+      className={`flex min-w-0 flex-col gap-4 rounded-card p-5 ${dark ? 'bg-primary text-on-primary' : 'bg-card'} ${onClick ? 'cursor-pointer transition-shadow hover:shadow-float' : ''}`}
+    >
       <div className="flex items-center justify-between gap-2">
         <span className={`text-sm ${dark ? 'text-on-primary/70' : 'text-text-secondary'}`}>{label}</span>
         <span className={`flex size-10 items-center justify-center rounded-full ${dark ? 'bg-mint text-on-mint' : 'bg-background'}`}>

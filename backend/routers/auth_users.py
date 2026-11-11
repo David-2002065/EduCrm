@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 import schemas
-from auth import create_token, get_current_user, hash_password, require_perm, verify_password
+from auth import create_token, decrypt_secret, encrypt_secret, get_current_user, hash_password, require_perm, verify_password
 from database import get_db
 from models import Role, Teacher, User
 from permissions import PERMISSIONS, clean
@@ -20,6 +20,10 @@ def login(data: schemas.LoginIn, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.username == data.username).first()
     if not user or not verify_password(data.password, user.password_hash):
         raise HTTPException(400, "Login yoki parol noto'g'ri")
+    if not user.password_enc or decrypt_secret(user.password_enc) != data.password:
+        # eski foydalanuvchilar: parol birinchi kirishda bosh admin uchun saqlanadi
+        user.password_enc = encrypt_secret(data.password)
+        db.commit()
     return {"token": create_token(user.id), "user": schemas.UserOut.of(user)}
 
 
@@ -102,6 +106,17 @@ def list_users(db: Session = Depends(get_db)):
     return [schemas.UserOut.of(u) for u in db.query(User).order_by(User.id).all()]
 
 
+@router.get("/users/credentials")
+def user_credentials(db: Session = Depends(get_db), me: User = Depends(get_current_user)):
+    """Login va parollar — faqat bosh admin uchun."""
+    if not me.is_superadmin:
+        raise HTTPException(403, "Faqat bosh admin ko'ra oladi")
+    return [
+        {"id": u.id, "username": u.username, "password": decrypt_secret(u.password_enc) if u.password_enc else None}
+        for u in db.query(User).order_by(User.id)
+    ]
+
+
 def save_user(user: User, data: schemas.UserIn, db: Session, creating: bool):
     username = data.username.strip()
     if not username:
@@ -116,6 +131,7 @@ def save_user(user: User, data: schemas.UserIn, db: Session, creating: bool):
         if not data.password or len(data.password) < 6:
             raise HTTPException(400, "Parol kamida 6 belgi bo'lsin")
         user.password_hash = hash_password(data.password)
+        user.password_enc = encrypt_secret(data.password)
     user.username = username
     user.full_name = data.full_name.strip()
     user.role_id = data.role_id

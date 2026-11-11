@@ -17,6 +17,10 @@ export const NAV_SECTIONS = [
     ],
   },
   {
+    title: "Mashg'ulot",
+    items: [{ to: '/ai-tutor', label: 'AI ustoz', icon: 'sparkles' }],
+  },
+  {
     title: 'Sozlamalar',
     items: [
       { to: '/branches', label: 'Filiallar', icon: 'building', permission: 'branches.manage' },

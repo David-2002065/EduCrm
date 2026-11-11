@@ -3,6 +3,7 @@
 Filial -> Guruh -> O'quvchi
 O'quvchi -> Davomat (kunlik), To'lov (oylik)
 """
+import json
 from datetime import date, datetime
 
 from sqlalchemy import Boolean, Column, Date, DateTime, ForeignKey, Integer, String, Text, UniqueConstraint
@@ -39,6 +40,7 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     username = Column(String(50), unique=True, nullable=False)
     password_hash = Column(String(200), nullable=False)
+    password_enc = Column(Text, nullable=True)  # bosh admin ko'rishi uchun shifrlangan parol (auth.encrypt_secret)
     full_name = Column(String(100), nullable=False)
     role = Column(String(20), default="")  # eski ustun (v3 gacha), endi role_id ishlatiladi
     role_id = Column(Integer, ForeignKey("roles.id"), nullable=True)
@@ -145,6 +147,7 @@ class Student(Base):
     joined_at = Column(Date, default=date.today)
     branch_id = Column(Integer, ForeignKey("branches.id"), nullable=False)
     group_id = Column(Integer, ForeignKey("groups.id"), nullable=True)
+    telegram_chat_id = Column(String(30), nullable=True)  # Telegram botda ro'yxatdan o'tgan bo'lsa
 
     branch = relationship("Branch", back_populates="students")
     group = relationship("Group", back_populates="students")
@@ -205,3 +208,67 @@ class Payment(Base):
     @property
     def group_name(self):
         return self.student.group_name if self.student else None
+
+
+class Test(Base):
+    """Test vazifa: ustoz guruhiga qo'shadi, o'quvchilar Telegram botda bajaradi."""
+    __tablename__ = "tests"
+
+    id = Column(Integer, primary_key=True)
+    group_id = Column(Integer, ForeignKey("groups.id"), nullable=False)
+    title = Column(String(200), nullable=False)
+    created_by = Column(Integer, ForeignKey("users.id"), nullable=True)
+    created_at = Column(DateTime, default=datetime.now)
+
+    group = relationship("Group")
+    author = relationship("User")
+    questions = relationship("TestQuestion", back_populates="test", cascade="all, delete-orphan",
+                             order_by="TestQuestion.position")
+    attempts = relationship("TestAttempt", back_populates="test", cascade="all, delete-orphan")
+
+    @property
+    def group_name(self):
+        return self.group.name if self.group else None
+
+    @property
+    def author_name(self):
+        return self.author.full_name if self.author else None
+
+
+class TestQuestion(Base):
+    """Savol va javob variantlari (A, B, C, ...). correct_index — to'g'ri variant tartib raqami (0 dan)."""
+    __tablename__ = "test_questions"
+
+    id = Column(Integer, primary_key=True)
+    test_id = Column(Integer, ForeignKey("tests.id"), nullable=False)
+    position = Column(Integer, default=0)
+    text = Column(Text, nullable=False)
+    options = Column(Text, nullable=False)  # JSON: ["javob A", "javob B", "javob C"]
+    correct_index = Column(Integer, nullable=False)
+
+    test = relationship("Test", back_populates="questions")
+
+    @property
+    def option_list(self):
+        return json.loads(self.options or "[]")
+
+
+class TestAttempt(Base):
+    """O'quvchining testni bajarishi. finished_at bo'sh bo'lsa — hali tugatmagan."""
+    __tablename__ = "test_attempts"
+    __table_args__ = (UniqueConstraint("test_id", "student_id"),)
+
+    id = Column(Integer, primary_key=True)
+    test_id = Column(Integer, ForeignKey("tests.id"), nullable=False)
+    student_id = Column(Integer, ForeignKey("students.id"), nullable=False)
+    answers = Column(Text, default="[]")  # JSON: tanlangan variantlar [0, 2, 1, ...]
+    correct_count = Column(Integer, default=0)
+    started_at = Column(DateTime, default=datetime.now)
+    finished_at = Column(DateTime, nullable=True)
+
+    test = relationship("Test", back_populates="attempts")
+    student = relationship("Student")
+
+    @property
+    def answer_list(self):
+        return json.loads(self.answers or "[]")

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import Field, { controlClass } from './Field'
+import Field, { controlClass, useFieldError } from './Field'
 import Icon from './Icon'
 import Popover from './Popover'
 
@@ -11,7 +11,8 @@ const QUICK = ['08:00', '10:00', '14:00', '16:00', '18:00']
  * Vaqt tanlash: chapda soatlar, o'ngda daqiqalar, tepada tez tanlash.
  * value / onChange — "HH:MM" ko'rinishida.
  */
-export default function TimePicker({ label, error, value, onChange, placeholder = 'Vaqtni tanlang', clearable = false, className = '' }) {
+export default function TimePicker({ label, error, value, onChange, placeholder = 'Vaqtni tanlang', clearable = false, required = false, className = '' }) {
+  error = useFieldError({ error, required, missing: !value })
   const [open, setOpen] = useState(false)
   const triggerRef = useRef(null)
   const [hour, minute] = value ? value.split(':') : ['', '']
@@ -19,7 +20,7 @@ export default function TimePicker({ label, error, value, onChange, placeholder 
   const set = (h, m) => onChange?.(`${h || '09'}:${m || '00'}`)
 
   return (
-    <Field label={label} error={error} className={className}>
+    <Field label={label} error={error} required={required} missing={!value} className={className}>
       <button
         ref={triggerRef}
         type="button"

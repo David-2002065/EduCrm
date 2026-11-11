@@ -33,7 +33,9 @@ async function request(method, path, body) {
   const data = await res.json().catch(() => null)
   if (!res.ok) {
     const detail = data?.detail
-    throw new Error(typeof detail === 'string' ? detail : 'Xatolik yuz berdi')
+    // Pydantic tekshiruvi xatosi: [{ msg: 'Value error, Telefon raqamni ...' }]
+    const message = typeof detail === 'string' ? detail : detail?.[0]?.msg?.replace(/^Value error, /, '')
+    throw new Error(message || 'Xatolik yuz berdi')
   }
   return data
 }

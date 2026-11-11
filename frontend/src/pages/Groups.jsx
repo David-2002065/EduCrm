@@ -23,6 +23,7 @@ export default function Groups() {
   const toast = useToast()
   const { can } = useAuth()
   const canManage = can('groups.manage')
+  const canTests = can('tests.manage')
   // Guruh bosilsa — davomatga (ruxsat bo'lsa)
   const openAttendance = (g) => can('attendance.mark') && navigate(`/attendance?group=${g.id}`)
   const { branchId, reloadBranches } = useBranch()
@@ -84,6 +85,7 @@ export default function Groups() {
               key={g.id}
               group={g}
               onOpen={() => openAttendance(g)}
+              onTests={canTests ? () => navigate(`/groups/${g.id}/tests`) : undefined}
               onEdit={canManage ? () => form.open(g) : undefined}
               onDelete={canManage ? () => remove.open(g) : undefined}
             />

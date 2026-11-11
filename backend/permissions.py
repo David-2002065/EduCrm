@@ -14,6 +14,7 @@ PERMISSIONS = [
     ("teachers.view", "Ustozlar", "Ustozlar ro'yxatini ko'rish"),
     ("teachers.manage", "Ustozlar", "Qo'shish, tahrirlash, o'chirish"),
     ("attendance.mark", "Davomat", "Davomat olish (keldi / kelmadi)"),
+    ("tests.manage", "Test vazifalar", "Guruhga test qo'shish va natijalarni ko'rish"),
     ("payments.view", "To'lovlar", "Kim to'ladi / to'lamadi, to'lovlar tarixi"),
     ("payments.create", "To'lovlar", "To'lov qabul qilish va chek chiqarish"),
     ("payments.delete", "To'lovlar", "To'lovni o'chirish"),
@@ -30,8 +31,11 @@ DEFAULT_ROLES = [
     ("Reception", ["dashboard.view", "students.view", "students.edit", "groups.view", "teachers.view",
                    "attendance.mark", "payments.view", "payments.create"], False),
     ("Kassir", ["students.view", "groups.view", "payments.view", "payments.create"], False),
-    ("Ustoz", ["groups.view", "students.view", "attendance.mark"], False),
+    ("Ustoz", ["groups.view", "students.view", "attendance.mark", "tests.manage"], False),
 ]
+
+# Keyinroq qo'shilgan ruxsatlar: eski bazadagi rollarga bir marta qo'shiladi (migrate.py)
+ADDED_PERMISSIONS = {"tests.manage": ["Admin", "Ustoz"]}
 
 # Eski bazadagi role matnidan yangi rolga
 LEGACY_ROLE_NAMES = {"superadmin": "Bosh admin", "admin": "Admin", "reception": "Reception"}

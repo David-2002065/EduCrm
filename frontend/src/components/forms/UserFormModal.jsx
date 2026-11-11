@@ -57,6 +57,7 @@ export default function UserFormModal({ open, onClose, user }) {
       />
       <Select
         label="Rol"
+        required
         options={(roles || []).map((r) => ({ value: String(r.id), label: r.name, hint: r.is_system ? 'hamma ruxsat' : `${r.permissions.length} ta ruxsat` }))}
         placeholder="Rolni tanlang"
         {...form.field('role_id')}

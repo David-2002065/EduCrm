@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import Field, { controlClass } from './Field'
+import Field, { controlClass, useFieldError } from './Field'
 import Icon from './Icon'
 import Popover from './Popover'
 
@@ -21,6 +21,7 @@ export default function Select({
   clearable = false,
   searchable,
   disabled = false,
+  required = false,
   className = '',
 }) {
   const [open, setOpen] = useState(false)
@@ -31,6 +32,7 @@ export default function Select({
 
   const showSearch = searchable ?? options.length > 7
   const selected = options.find((o) => String(o.value) === String(value))
+  error = useFieldError({ error, required, missing: !selected })
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
@@ -78,7 +80,7 @@ export default function Select({
   }, [active, open])
 
   return (
-    <Field label={label} error={error} hint={hint} className={className}>
+    <Field label={label} error={error} hint={hint} required={required} missing={!selected} className={className}>
       <button
         ref={triggerRef}
         type="button"

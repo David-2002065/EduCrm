@@ -119,3 +119,21 @@ body {
 /* Brauzerning o'z "x" tugmasini yashiramiz — o'zimiznikini ishlatamiz */
 input[type="search"]::-webkit-search-cancel-button,
 input[type="search"]::-webkit-search-decoration { -webkit-appearance: none; appearance: none; }
+
+/* AI ustoz personaji */
+@keyframes tutor-float { 0%, 100% { transform: translateY(0) } 50% { transform: translateY(-8px) } }
+@keyframes tutor-bounce { 0%, 100% { transform: translateY(0) scale(1) } 50% { transform: translateY(-4px) scale(1.02, .98) } }
+@keyframes tutor-talk { 0%, 100% { transform: scaleY(1) } 50% { transform: scaleY(.45) } }
+@keyframes tutor-pulse { 0%, 100% { opacity: .5; transform: scale(.92) } 50% { opacity: .95; transform: scale(1.08) } }
+@keyframes tutor-twinkle { 0%, 100% { opacity: 1 } 50% { opacity: .35 } }
+@keyframes tutor-steam { 0% { opacity: 0; transform: translateY(6px) } 50% { opacity: 1 } 100% { opacity: 0; transform: translateY(-8px) } }
+.tutor-float { animation: tutor-float 3.2s ease-in-out infinite }
+.tutor-bounce { animation: tutor-bounce .45s ease-in-out infinite }
+.tutor-talk { animation: tutor-talk .22s ease-in-out infinite }
+.tutor-pulse { animation: tutor-pulse 1.1s ease-in-out infinite }
+.tutor-twinkle { animation: tutor-twinkle 1.4s ease-in-out infinite }
+.tutor-steam { animation: tutor-steam 1.2s ease-out infinite }
+.tutor-dots { animation: tutor-twinkle 1s ease-in-out infinite }
+@media (prefers-reduced-motion: reduce) {
+  .tutor-float, .tutor-bounce, .tutor-talk, .tutor-pulse, .tutor-twinkle, .tutor-steam, .tutor-dots { animation: none }
+}

@@ -29,23 +29,22 @@ export default function Attendance() {
   // Tanlangan guruh boshqa filialniki bo'lsa ham ro'yxatda turadi
   const groupOptions = (group && !groups.includes(group) ? [group, ...groups] : groups).map(groupToOption)
 
-  // Guruh tanlanmagan bo'lsa (yoki boshqa filial guruhi bo'lsa) — birinchisini tanlaymiz.
+  // Sahifaga to'g'ridan-to'g'ri kirilsa guruh tanlanmagan turadi — foydalanuvchi o'zi tanlaydi.
   // /groups sahifasidan ?group=3 bilan kelinsa, aynan shu guruh ochiladi.
-  useEffect(() => {
-    if (groups.length && !group) {
-      setParams({ group: String(groups[0].id) }, { replace: true })
-    }
-  }, [groups, group]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Yuqoridagi filial almashtirilsa — shu filialning guruhiga o'tamiz
+  // Yuqoridagi filial almashtirilsa va tanlangan guruh boshqa filialniki bo'lsa — tanlov tozalanadi
   useEffect(() => {
-    if (branchId && group && String(group.branch_id) !== branchId && groups.length) {
-      setParams({ group: String(groups[0].id) }, { replace: true })
+    if (branchId && group && String(group.branch_id) !== branchId) {
+      setParams({}, { replace: true })
     }
   }, [branchId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (!groupId || !day) return
+    if (!groupId || !day) {
+      setRows([])
+      setMarks({})
+      return
+    }
     setLoading(true)
     api.get(`/attendance${qs({ group_id: groupId, day })}`)
       .then((list) => {
@@ -93,7 +92,8 @@ export default function Attendance() {
           label="Guruh"
           options={groupOptions}
           value={groupId}
-          onChange={(v) => setParams({ group: v })}
+          onChange={(v) => setParams(v ? { group: v } : {})}
+          clearable
           placeholder="Guruhni tanlang"
           className="w-full sm:w-64"
         />

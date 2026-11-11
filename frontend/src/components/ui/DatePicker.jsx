@@ -3,7 +3,7 @@ import { DayPicker } from 'react-day-picker'
 import { uz } from 'react-day-picker/locale'
 import 'react-day-picker/style.css'
 import { formatDate, today } from '../../utils/format'
-import Field, { controlClass } from './Field'
+import Field, { controlClass, useFieldError } from './Field'
 import Icon from './Icon'
 import Popover from './Popover'
 
@@ -26,6 +26,7 @@ export default function DatePicker({
   max,
   placeholder = 'Sanani tanlang',
   clearable = false,
+  required = false,
   yearSelect = false,
   className = '',
 }) {
@@ -33,6 +34,7 @@ export default function DatePicker({
   const triggerRef = useRef(null)
 
   const selected = toDate(value)
+  error = useFieldError({ error, required, missing: !value })
   const disabled = [min && { before: toDate(min) }, max && { after: toDate(max) }].filter(Boolean)
 
   const choose = (date) => {
@@ -41,7 +43,7 @@ export default function DatePicker({
   }
 
   return (
-    <Field label={label} error={error} className={className}>
+    <Field label={label} error={error} required={required} missing={!value} className={className}>
       <button
         ref={triggerRef}
         type="button"

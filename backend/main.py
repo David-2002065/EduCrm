@@ -7,12 +7,17 @@ import io
 import zipfile
 from pathlib import Path
 
+from dotenv import load_dotenv
 from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
 
+# backend/.env dagi maxfiy sozlamalar (ANTHROPIC_API_KEY va h.k.) — boshqa importlardan oldin
+load_dotenv(Path(__file__).resolve().parent / ".env")
+
 from database import Base, SessionLocal, engine
 from migrate import migrate
-from routers import attendance, auth_users, branches, dashboard, groups, payments, students, teachers
+import telegram_bot
+from routers import ai_tutor, attendance, auth_users, branches, dashboard, groups, payments, students, teachers, tests
 from seed import seed
 
 Base.metadata.create_all(bind=engine)
@@ -42,7 +47,7 @@ def download_print_agent():
                     headers={"Content-Disposition": 'attachment; filename="edu-print-agent.zip"'})
 
 
-for r in (auth_users, branches, teachers, groups, students, attendance, payments, dashboard):
+for r in (auth_users, branches, teachers, groups, students, attendance, payments, dashboard, ai_tutor, tests):
     app.include_router(r.router, prefix="/api")
 
 
@@ -51,3 +56,4 @@ def on_startup():
     # Baza bo'sh bo'lsa, namunaviy ma'lumot qo'shadi (admin / admin123)
     with SessionLocal() as db:
         seed(db)
+    telegram_bot.start_in_background()  # TELEGRAM_BOT_TOKEN bo'lsa — o'quvchilar boti

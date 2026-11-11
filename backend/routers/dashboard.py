@@ -87,3 +87,26 @@ def dashboard(branch_id: Optional[int] = None, db: Session = Depends(get_db), _=
         "debtors": debtors[:6],
         "recent_payments": recent,
     }
+
+
+@router.get("/attendance-today")
+def attendance_today(branch_id: Optional[int] = None, db: Session = Depends(get_db), _=Depends(require_perm("dashboard.view"))):
+    """Bugun kim keldi / kechikdi / kelmadi: guruhi va ota-onasining telefoni bilan."""
+    query = (
+        db.query(Attendance, Student)
+        .join(Student, Student.id == Attendance.student_id)
+        .filter(Attendance.date == date.today(), Student.status == "active")
+    )
+    if branch_id:
+        query = query.filter(Student.branch_id == branch_id)
+    groups = {g.id: g for g in db.query(Group)}
+    rows = []
+    for a, s in query.order_by(Student.full_name).all():
+        g = groups.get(a.group_id or s.group_id)
+        rows.append({
+            "student_id": s.id, "full_name": s.full_name, "phone": s.phone,
+            "parent_name": s.parent_name, "parent_phone": s.parent_phone, "status": a.status,
+            "group_id": g.id if g else None, "group_name": g.name if g else None,
+            "group_time": g.time if g else "", "teacher_name": g.teacher_name if g else "",
+        })
+    return rows

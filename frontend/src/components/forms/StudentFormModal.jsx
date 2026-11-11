@@ -59,7 +59,7 @@ export default function StudentFormModal({ open, onClose, student, onSaved }) {
       <PhoneInput label="Ota-onasining telefoni" {...form.field('parent_phone')} />
 
       <FormSection title="O'qish" />
-      <Select label="Filial" options={branchOptions} value={form.values.branch_id} onChange={changeBranch} />
+      <Select label="Filial" required options={branchOptions} value={form.values.branch_id} onChange={changeBranch} />
       <Select
         label="Guruh"
         options={groupOptions}
